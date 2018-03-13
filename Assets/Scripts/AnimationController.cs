@@ -15,29 +15,17 @@ public class AnimationController : MonoBehaviour {
 	// Editor-defined speed for each animation
 	public float speed = 1.0f;
 
-	// Direction for next animation
-	// (true = animate forward, false = animate in reverse)
-	private bool forward = true;
-
 	/// Initializer function
 	void Start () {
-		// Link object references
+		// Initialize animation object
 		animation = gameObject.GetComponent<Animation>();
+		animation.wrapMode = WrapMode.PingPong;
 	}
 
 	// Update is called once per frame
 	void Update () {
 		// Only when the animator is not yet playing (or has already finished)
 		if (!animation.isPlaying) {
-
-			// Set speed (forward or backward)
-			foreach (AnimationState state in animation) {
-				state.speed = forward ? speed : -speed;
-			}
-
-			// Toggle for next time
-			forward = !forward;
-
 			// (Re)Start animation
 			animation.Play();
 		}
