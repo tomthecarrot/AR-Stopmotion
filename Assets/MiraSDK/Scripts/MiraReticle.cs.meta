@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 4f59de63b6c774e7aa43ba8f9a4e6828
+labels:
+- DonutLoading
+- Needed
+- NetrworkDemo
+- RocketDemo
+- Template
+- TrackerDemo
+timeCreated: 1512603486
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
