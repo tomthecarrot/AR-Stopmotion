@@ -5,6 +5,7 @@
 
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class AnimationController : MonoBehaviour {
@@ -13,7 +14,21 @@ public class AnimationController : MonoBehaviour {
 	private Animation animation;
 
 	// Editor-defined speed for each animation
-	public float speed = 1.0f;
+	public float _speed = 1.0f;
+
+	// Getter/setter version of the above variable
+	public float speed {
+		get {
+			return _speed;
+		}
+		set {
+			// Set new value to the variable
+			_speed = value;
+
+			// Set new value to the animation state
+			animation[clipName].speed = value;
+		}
+	}
 
 	// Editor-defined name of the animation clip
 	public string clipName = "Clip";
@@ -21,7 +36,7 @@ public class AnimationController : MonoBehaviour {
 	// The number of the animation frame currently being displayed
 	private int _currentFrame;
 
-	// Public version of the above variable
+	// Public getter/setter version of the above variable
 	public int currentFrame {
 		get {
 			// Get animation state values
@@ -57,15 +72,35 @@ public class AnimationController : MonoBehaviour {
 
 		// Set animation to move along keyframes forward, then in reverse
 		animation.wrapMode = WrapMode.PingPong;
+
+		// Start animation
+		animation.Play();
 	}
 
 	// Update is called once per frame
 	void Update () {
-		// Only when the animator is not yet playing (or has already finished)
-		if (!animation.isPlaying) {
-			// (Re)Start animation
-			animation.Play();
-		}
+
+	}
+
+	public void Forward() {
+		// Set speed to be positive
+		speed = Math.Abs(speed);
+
+		// Play the animation
+		animation.Play();
+	}
+
+	public void Pause() {
+		// Stop the animation
+		animation.Stop();
+	}
+
+	public void Reverse() {
+		// Set speed to be negative
+		speed = -Math.Abs(speed);
+
+		// Play the animation
+		animation.Play();
 	}
 
 	public void JumpToFrame(int frameNumber) {
