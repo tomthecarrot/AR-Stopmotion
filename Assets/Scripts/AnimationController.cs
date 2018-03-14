@@ -10,6 +10,8 @@ using UnityEngine;
 
 public class AnimationController : MonoBehaviour {
 
+	///// VARIABLES AND GETTERS/SETTERS /////
+
 	// Object references
 	public static AnimationController instance;
 	private Animation animation;
@@ -45,7 +47,17 @@ public class AnimationController : MonoBehaviour {
 			float currentTime = state.time;
 
 			// Calculate and return
-			return (int) (currentTime * frameRate);
+			int calculatedFrame = (int) (currentTime * frameRate);
+
+			// If the difference between the calculated vs. stored frame number
+			// is too great (> 1 second) to be reasonably shown on screen,
+			// just return the calculated frame number
+			if (Math.Abs(_currentFrame - calculatedFrame) > frameRate) {
+				return calculatedFrame;
+			}
+
+			// Otherwise, return the stored frame number
+			return _currentFrame;
 		}
 		set {
 			// Set the new value
