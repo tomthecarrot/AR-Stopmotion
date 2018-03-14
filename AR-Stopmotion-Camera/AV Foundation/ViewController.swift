@@ -8,8 +8,11 @@
 
 import UIKit
 import Photos
+import SwiftWebSocket
 
 class ViewController: UIViewController {
+    
+    let ServerHost = "ec2-52-89-222-51.us-west-2.compute.amazonaws.com"
     
     @IBOutlet fileprivate var captureButton: UIButton!
     
@@ -53,6 +56,8 @@ extension ViewController {
         styleCaptureButton()
         configureCameraController()
         
+        initWebSocket()
+        
     }
 }
 
@@ -91,6 +96,10 @@ extension ViewController {
     }
     
     @IBAction func captureImage(_ sender: UIButton) {
+        captureImage()
+    }
+    
+    func captureImage() {
         cameraController.captureImage {(image, error) in
             guard let image = image else {
                 print(error ?? "Image capture error")
@@ -99,6 +108,31 @@ extension ViewController {
             
             try? PHPhotoLibrary.shared().performChangesAndWait {
                 PHAssetChangeRequest.creationRequestForAsset(from: image)
+            }
+        }
+    }
+    
+    func initWebSocket() {
+        let ws = WebSocket("ws://\(ServerHost):8080")
+        
+        ws.event.open = {
+            print("opened")
+            ws.send("camera") // identify self as camera to server
+        }
+        ws.event.close = { code, reason, clean in
+            print("close")
+        }
+        ws.event.error = { error in
+            print("error \(error)")
+        }
+        ws.event.message = { message in
+            if let text = message as? String {
+                print("recv: \(text)")
+                if text.contains("photo") {
+                    // Take a picture
+                    print("taking a picture")
+                    self.captureImage()
+                }
             }
         }
     }
