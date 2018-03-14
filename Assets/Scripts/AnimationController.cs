@@ -181,6 +181,7 @@ public class AnimationController : MonoBehaviour {
 
         _handheldController = HandheldController.instance;
         _handheldController.TriggerPressed += HandleTriggerPressed;
+        _handheldController.TriggerReleased += HandleTriggerReleased;
         _handheldController.TouchpadPressed += HandleTouchpadPressed;
 	}
 
@@ -300,6 +301,13 @@ public class AnimationController : MonoBehaviour {
     private void HandleTriggerPressed()
     {
         Debug.Log( "HandleTriggerPressed" );
+        gameObject.SetActive( false );
+    }
+
+    private void HandleTriggerReleased()
+    {
+        Debug.Log( "HandleTriggerReleased" );
+        gameObject.SetActive( true ); 
     }
 
     private void HandleTouchpadPressed()
@@ -313,7 +321,7 @@ public class AnimationController : MonoBehaviour {
         else if ( MiraController.TouchPos[ 1 ] <= 0.5f )
         {
             // frame back
-            Reverse();
+            Reverse(); 
         }
-    }
+    } 
 }
