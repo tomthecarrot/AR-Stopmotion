@@ -12,6 +12,9 @@ public class AnimationController : MonoBehaviour {
 
     ///// VARIABLES AND GETTERS/SETTERS /////
 
+    private WebSocket w;
+    private string ServerHost = "ec2-52-89-222-51.us-west-2.compute.amazonaws.com";
+
     // Object references
     public static AnimationController instance;
     private Animation animation;
@@ -168,6 +171,10 @@ public class AnimationController : MonoBehaviour {
 
         // Initialize list of animators
         if ( !legacyMode ) { animators = new List<Animator>(); }
+
+        // Init camera network
+        w = new WebSocket(new Uri("ws://" + ServerHost + ":8080"));
+    		StartCoroutine(w.Connect());
     }
 
     /// Initializer function
@@ -214,7 +221,7 @@ public class AnimationController : MonoBehaviour {
             StartPlayback();
         }
 
-        _handheldController = HandheldController.Instance; 
+        _handheldController = HandheldController.Instance;
         _handheldController.TriggerPressed += HandleTriggerPressed;
         _handheldController.TriggerReleased += HandleTriggerReleased;
         _handheldController.TouchpadPressed += HandleTouchpadPressed;
@@ -226,7 +233,7 @@ public class AnimationController : MonoBehaviour {
     void Update() {
         // Use keyboard to test, out of headset
         KeyboardTest();
-        
+
         // Handle new animator
         if ( !legacyMode ) { HandleNewAnimator(); }
     }
@@ -316,7 +323,7 @@ public class AnimationController : MonoBehaviour {
         }
     }
 
-    // 
+    //
     void PlayInFixedTime()
     {
         AnimatorClipInfo info;
@@ -331,7 +338,7 @@ public class AnimationController : MonoBehaviour {
             animators[ i ].PlayInFixedTime( info.clip.name, -1, _playheadTime - ( ( 5 - i ) * _secondsPerFrame * _exaggerateOnion ) );
         }
 
-        // Keyframe at position 6 
+        // Keyframe at position 6
         info = animators[ 5 ].GetCurrentAnimatorClipInfo( 0 )[ 0 ];
         animators[ i ].PlayInFixedTime( info.clip.name, -1, _playheadTime );
 
@@ -436,6 +443,8 @@ public class AnimationController : MonoBehaviour {
     private void HandleBackPressed()
     {
         Debug.Log( "HandleBackPressed" );
+
+        w.SendString("photo");
     }
 
     private void HandleStartPressed()
