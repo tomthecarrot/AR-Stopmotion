@@ -46,6 +46,9 @@ public class AnimationController : MonoBehaviour {
 	// The number of the animation frame currently being displayed
 	private int _currentFrame;
 
+    // Helper Singleton for listening to Mira controller events
+    private HandheldController _handheldController;
+
 	// Public getter/setter version of the above variable
 	public int currentFrame {
 		get {
@@ -175,6 +178,10 @@ public class AnimationController : MonoBehaviour {
 			// Start animation
 			animators[0].StartPlayback();
 		}
+
+        _handheldController = HandheldController.instance;
+        _handheldController.TriggerPressed += HandleTriggerPressed;
+        _handheldController.TouchpadPressed += HandleTouchpadPressed;
 	}
 
 	// Update is called once per frame
@@ -290,4 +297,23 @@ public class AnimationController : MonoBehaviour {
 		currentFrame -= 1;
 	}
 
+    private void HandleTriggerPressed()
+    {
+        Debug.Log( "HandleTriggerPressed" );
+    }
+
+    private void HandleTouchpadPressed()
+    {
+        Debug.LogFormat( "HandleTouchpadPressed at: {0}, {1}", MiraController.TouchPos[ 0 ], MiraController.TouchPos[ 1 ] );
+        if( MiraController.TouchPos[ 1 ] > 0.5f )
+        {
+            // frame forward
+            Forward();
+        }
+        else if ( MiraController.TouchPos[ 1 ] <= 0.5f )
+        {
+            // frame back
+            Reverse();
+        }
+    }
 }
