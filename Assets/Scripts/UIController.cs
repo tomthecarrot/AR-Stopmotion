@@ -78,13 +78,13 @@ public class UIController : MonoBehaviour {
 //	}
 
 	void Update(){
-		
+
 		dt += Time.deltaTime;
 		if (dt > 4.0 && t){
 			t = false;
 			changeState(menuState.activeSettings);
 		}
-	
+
 	}
 
 	void Awake() {
@@ -95,7 +95,7 @@ public class UIController : MonoBehaviour {
 			DontDestroyOnLoad (gameObject);
 		}
 	}
-		
+
 
 	private void changeState(menuState nextState){
 		Debug.Log("CHANGING STATE to... ");
@@ -147,6 +147,19 @@ public class UIController : MonoBehaviour {
 
 	public void activateMenu(){
 			changeState(menuState.activeSettings);
+	}
+
+	public void deactivateMenu() {
+		changeState(menuState.inactive);
+	}
+
+	public void toggleActive() {
+		if (currMenuState == menuState.inactive) {
+			activateMenu();
+		}
+		else {
+			deactivateMenu();
+		}
 	}
 
 	private void helpClicked(){

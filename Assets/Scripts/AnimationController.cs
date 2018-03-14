@@ -62,7 +62,7 @@ public class AnimationController : MonoBehaviour {
     private float _onionAlphaHigh, _onionAlphaLow;
 
     // onion skin hide/show
-    private bool _onionSkinOn = true;
+    private bool _onionSkinOn = false;
 
     // onion skin GameObjects
     private List<GameObject> _onionSkinGO;
@@ -205,7 +205,7 @@ public class AnimationController : MonoBehaviour {
         }
         else {
             // Get animator component
-            float tAlpha;
+            /* float tAlpha;
             int i;
             GameObject tNewCharacter;
             for ( i = 0; i < 5; i++ )
@@ -214,9 +214,10 @@ public class AnimationController : MonoBehaviour {
                 _onionSkinGO.Add( tNewCharacter );
                 tAlpha = RemapIntToFloatRange( i, 0, 4, _onionAlphaLow, _onionAlphaHigh );
                 Debug.Log(tAlpha);
-                tNewCharacter.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, tAlpha );
-                animators.Add( tNewCharacter.GetComponent<Animator>() );
+                tNewCharacter.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, 0.0f );
             }
+            */
+
 
             //Debug.Log("human" + character.transform.Find( "MHuman" ).GetComponent<Renderer>().material );
             //character.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, 0.5f ); // RemapIntToFloatRange( i, 4, 0, _onionAlphaHigh, _onionAlphaLow ) );
@@ -226,7 +227,7 @@ public class AnimationController : MonoBehaviour {
             //{
             //    tNewCharacter = Instantiate( character, character.transform.position, character.transform.rotation );
             //    tAlpha = RemapIntToFloatRange( i, 5, 9, _onionAlphaHigh, _onionAlphaLow );
-            //    Debug.Log( tAlpha ); 
+            //    Debug.Log( tAlpha );
             //    tNewCharacter.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, tAlpha );
             //    animators.Add( tNewCharacter.GetComponent<Animator>() );
             //}
@@ -333,17 +334,24 @@ public class AnimationController : MonoBehaviour {
     // set StartPlayback on all the Animators
     void StartPlayback()
     {
-        int i;
-        int len = animators.Count;
-        for ( i = 0; i < len; i++ )
-        {
-            animators[ i ].StartPlayback();
-        }
+        animators[ 0 ].StartPlayback();
+        //
+        // int i;
+        // int len = animators.Count;
+        // for ( i = 0; i < len; i++ )
+        // {
+        //     animators[ i ].StartPlayback();
+        // }
     }
 
     //
     void PlayInFixedTime()
     {
+      // Keyframe at position 6
+      AnimatorClipInfo info = animators[ 0 ].GetCurrentAnimatorClipInfo( 0 )[ 0 ];
+      //Debug.Log( _playheadTime );
+      animators[ 0 ].PlayInFixedTime( info.clip.name, -1, _playheadTime );
+      /*
         AnimatorClipInfo info;
 
         float tTime;
@@ -373,6 +381,8 @@ public class AnimationController : MonoBehaviour {
         //    //Debug.Log( tTime );
         //    animators[ i ].PlayInFixedTime( info.clip.name, -1, tTime * _exaggerateOnion );
         //}
+
+        */
     }
 
     // calculates the fraction of a second that represents each frame at the given frame rate
@@ -458,20 +468,31 @@ public class AnimationController : MonoBehaviour {
     {
         Debug.Log( "HandleTriggerReleased" );
         character.SetActive( true );
+        
+        StartPlayback();
+        currentFrame = currentFrame;
     }
 
     private void HandleTouchpadPressed()
     {
         Debug.LogFormat( "HandleTouchpadPressed at: {0}, {1}", MiraController.TouchPos[ 0 ], MiraController.TouchPos[ 1 ] );
-        if ( MiraController.TouchPos[ 1 ] > 0.5f )
+        if ( MiraController.TouchPos[ 0 ] > 0.5f )
         {
             // frame forward
-            Forward();
+            ForwardOneFrame();
+        }
+        else if ( MiraController.TouchPos[ 0 ] <= 0.5f )
+        {
+            // frame back
+            BackOneFrame();
+        }
+        else if ( MiraController.TouchPos[ 1 ] > 0.5f )
+        {
+            // ToggleOnionSkin();
         }
         else if ( MiraController.TouchPos[ 1 ] <= 0.5f )
         {
-            // frame back
-            Reverse();
+            UIController.instance.toggleActive();
         }
     }
 
@@ -485,14 +506,12 @@ public class AnimationController : MonoBehaviour {
     private void HandleStartPressed()
     {
         Debug.Log( "HandleStartPressed" );
-
-        ToggleOnionSkin();
     }
-    
+
     // utility range map
     public static float RemapIntToFloatRange( int value, float from1, float to1, float from2, float to2 )
     {
         return ( (float)value - from1 ) / ( to1 - from1 ) * ( to2 - from2 ) + from2;
     }
-    
+
 }
