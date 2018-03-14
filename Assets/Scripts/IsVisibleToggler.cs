@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class IsVisibleToggler : MonoBehaviour {
 
-	private bool isVisible = false;
+	private bool isVisible = true;
 	private GameObject owner;
 	private Canvas parentCanvas;
 
+
+	// someone call me
 	public void toggleMenu(){
 		if (parentCanvas != null) {
 			parentCanvas.enabled = isVisible;
@@ -31,13 +33,17 @@ public class IsVisibleToggler : MonoBehaviour {
 		} else {
 			Debug.LogError ("no parent slider found");
 		}
-			
+
+		HandheldController hc = HandheldController.Instance;
+		hc.BackPressed += toggleMenu;
+
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		if (Input.GetKeyDown ("space"))
 			toggleMenu ();
-		
+
 	}
+
+
 }
