@@ -4,15 +4,17 @@ using UnityEngine;
 using System;
 
 public class HandheldController : MonoBehaviour {
-    public static HandheldController instance;
+    private static HandheldController instance;
 
     public Action TriggerPressed;
     public Action TriggerReleased;
     public Action TouchpadPressed;
-    
+    public Action BackPressed;
+    public Action StartPressed;
+
     private void Awake()
-    {
-        if ( instance != null )
+    {  
+        if ( instance != null && instance != this )
         {
             Destroy( gameObject );
         }
@@ -22,13 +24,17 @@ public class HandheldController : MonoBehaviour {
             DontDestroyOnLoad( gameObject );
         }
     }
-    
+
+    public static HandheldController Instance { get { return instance; } }
+  
     // Use this for initialization
     void Start () {
         // debug
         TriggerPressed += DebugTriggerPressed;
         TriggerReleased += DebugTriggerReleased;
         TouchpadPressed += DebugTouchpadPressed;
+        BackPressed += DebugBackPressed;
+        StartPressed += DebugStartPressed;
 	}
 	
 	// Update is called once per frame
@@ -55,7 +61,23 @@ public class HandheldController : MonoBehaviour {
             {
                 TouchpadPressed();
             }
-        } 
+        }
+
+        if ( MiraController.BackButtonPressed )
+        {
+            if ( BackPressed != null )
+            {
+                BackPressed();
+            }
+        }
+
+        if ( MiraController.StartButtonPressed )
+        {
+            if ( StartPressed != null )
+            {
+                StartPressed();
+            }
+        }
     }
 
     private void DebugTriggerPressed()
@@ -71,5 +93,15 @@ public class HandheldController : MonoBehaviour {
     private void DebugTouchpadPressed()
     {
         Debug.LogFormat( "DebugTouchpadPressed at: {0}, {1}", MiraController.TouchPos[0], MiraController.TouchPos[ 1 ] );
-    }  
+    }
+
+    private void DebugBackPressed()
+    {
+        Debug.Log( "DebugBackPressed" );
+    }
+
+    private void DebugStartPressed()
+    {
+        Debug.Log( "DebugStartPressed" );
+    }
 }
