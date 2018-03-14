@@ -58,6 +58,12 @@ public class AnimationController : MonoBehaviour {
     // onion skin alphas. High is the most opaque, Low is the least opaque
     private float _onionAlphaHigh, _onionAlphaLow;
 
+    // onion skin hide/show
+    private bool _onionSkinOn = true;
+
+    // onion skin GameObjects
+    private List<GameObject> _onionSkinGO;
+
     // Public getter/setter version of the above variable
     public int currentFrame {
         get {
@@ -176,6 +182,8 @@ public class AnimationController : MonoBehaviour {
         _onionAlphaHigh = 0.75f;
         _onionAlphaLow = 0.15f;
 
+        _onionSkinGO = new List<GameObject>();
+
         SetSecondsPerFrame();
 
         if ( legacyMode ) {
@@ -196,6 +204,7 @@ public class AnimationController : MonoBehaviour {
             for ( i = 0; i < 5; i++ )
             {
                 tNewCharacter = Instantiate( character, character.transform.position, character.transform.rotation );
+                _onionSkinGO.Add( tNewCharacter );
                 tAlpha = RemapIntToFloatRange( i, 0, 4, _onionAlphaLow, _onionAlphaHigh );
                 Debug.Log(tAlpha);
                 tNewCharacter.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, tAlpha );
@@ -206,14 +215,14 @@ public class AnimationController : MonoBehaviour {
             //character.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, 0.5f ); // RemapIntToFloatRange( i, 4, 0, _onionAlphaHigh, _onionAlphaLow ) );
             animators.Add( character.GetComponent<Animator>() );
 
-            for ( i = 5; i < 10; i++ )
-            {
-                tNewCharacter = Instantiate( character, character.transform.position, character.transform.rotation );
-                tAlpha = RemapIntToFloatRange( i, 5, 9, _onionAlphaHigh, _onionAlphaLow );
-                Debug.Log( tAlpha ); 
-                tNewCharacter.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, tAlpha );
-                animators.Add( tNewCharacter.GetComponent<Animator>() );
-            }
+            //for ( i = 5; i < 10; i++ )
+            //{
+            //    tNewCharacter = Instantiate( character, character.transform.position, character.transform.rotation );
+            //    tAlpha = RemapIntToFloatRange( i, 5, 9, _onionAlphaHigh, _onionAlphaLow );
+            //    Debug.Log( tAlpha ); 
+            //    tNewCharacter.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, tAlpha );
+            //    animators.Add( tNewCharacter.GetComponent<Animator>() );
+            //}
 
             // Start animation
             StartPlayback();
@@ -284,6 +293,10 @@ public class AnimationController : MonoBehaviour {
                 Reverse();
             }
         }
+        else if ( Input.GetKeyDown( KeyCode.U ) )
+        {
+            ToggleOnionSkin();
+        }
         else if ( Input.GetKeyDown( KeyCode.UpArrow ) ) {
             // Increase speed by 10%
             SetNewSpeed( speed * 1.1f );
@@ -345,14 +358,14 @@ public class AnimationController : MonoBehaviour {
         animators[ i ].PlayInFixedTime( info.clip.name, -1, _playheadTime );
 
         // Forward Frames
-        for ( i = 5; i < 10; i++ )
-        {
-            // Get the current animator clip data
-            info = animators[ i ].GetCurrentAnimatorClipInfo( 0 )[ 0 ];
-            tTime = _playheadTime + ( i * _secondsPerFrame );
-            //Debug.Log( tTime );
-            animators[ i ].PlayInFixedTime( info.clip.name, -1, tTime * _exaggerateOnion );
-        }
+        //for ( i = 5; i < 10; i++ )
+        //{
+        //    // Get the current animator clip data
+        //    info = animators[ i ].GetCurrentAnimatorClipInfo( 0 )[ 0 ];
+        //    tTime = _playheadTime + ( i * _secondsPerFrame );
+        //    //Debug.Log( tTime );
+        //    animators[ i ].PlayInFixedTime( info.clip.name, -1, tTime * _exaggerateOnion );
+        //}
     }
 
     // calculates the fraction of a second that represents each frame at the given frame rate
@@ -416,6 +429,18 @@ public class AnimationController : MonoBehaviour {
         currentFrame -= 1;
     }
 
+    public void ToggleOnionSkin()
+    {
+        _onionSkinOn = !_onionSkinOn;
+
+        int i = 0;
+        int len = _onionSkinGO.Count;
+        for ( i = 0; i < len; i++ )
+        {
+            _onionSkinGO[ i ].transform.Find( "MHuman" ).GetComponent<Renderer>().enabled = _onionSkinOn;
+        }
+    }
+
     private void HandleTriggerPressed()
     {
         Debug.Log( "HandleTriggerPressed" );
@@ -451,11 +476,14 @@ public class AnimationController : MonoBehaviour {
     private void HandleStartPressed()
     {
         Debug.Log( "HandleStartPressed" );
-    }
 
+        ToggleOnionSkin();
+    }
+    
     // utility range map
     public static float RemapIntToFloatRange( int value, float from1, float to1, float from2, float to2 )
     {
         return ( (float)value - from1 ) / ( to1 - from1 ) * ( to2 - from2 ) + from2;
     }
+    
 }
