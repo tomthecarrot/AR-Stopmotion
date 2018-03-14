@@ -190,12 +190,15 @@ public class AnimationController : MonoBehaviour {
         }
         else {
             // Get animator component
+            float tAlpha;
             int i;
             GameObject tNewCharacter;
             for ( i = 0; i < 5; i++ )
             {
                 tNewCharacter = Instantiate( character, character.transform.position, character.transform.rotation );
-                tNewCharacter.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, RemapIntToFloatRange( i, 0, 4, _onionAlphaLow, _onionAlphaHigh ) );
+                tAlpha = RemapIntToFloatRange( i, 0, 4, _onionAlphaLow, _onionAlphaHigh );
+                Debug.Log(tAlpha);
+                tNewCharacter.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, tAlpha );
                 animators.Add( tNewCharacter.GetComponent<Animator>() );
             }
 
@@ -206,7 +209,9 @@ public class AnimationController : MonoBehaviour {
             for ( i = 5; i < 10; i++ )
             {
                 tNewCharacter = Instantiate( character, character.transform.position, character.transform.rotation );
-                tNewCharacter.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, RemapIntToFloatRange( i, 5, 9, _onionAlphaHigh, _onionAlphaLow ) );
+                tAlpha = RemapIntToFloatRange( i, 5, 9, _onionAlphaHigh, _onionAlphaLow );
+                Debug.Log( tAlpha ); 
+                tNewCharacter.transform.Find( "MHuman" ).GetComponent<Renderer>().material.color = new Color( _colorOn.r, _colorOn.g, _colorOn.b, tAlpha );
                 animators.Add( tNewCharacter.GetComponent<Animator>() );
             }
 
@@ -321,6 +326,7 @@ public class AnimationController : MonoBehaviour {
     {
         AnimatorClipInfo info;
 
+        float tTime;
         int i;
         // Back Frames
         for ( i = 0; i < 5; i++ )
@@ -328,11 +334,14 @@ public class AnimationController : MonoBehaviour {
             // Get the current animator clip data
             info = animators[ i ].GetCurrentAnimatorClipInfo( 0 )[ 0 ];
 
-            animators[ i ].PlayInFixedTime( info.clip.name, -1, _playheadTime - ( ( 5 - i ) * _secondsPerFrame * _exaggerateOnion ) );
+            tTime = _playheadTime - ( 5 - i ) * _secondsPerFrame;
+            //Debug.Log( tTime );
+            animators[ i ].PlayInFixedTime( info.clip.name, -1, tTime * _exaggerateOnion );
         }
 
         // Keyframe at position 6 
         info = animators[ 5 ].GetCurrentAnimatorClipInfo( 0 )[ 0 ];
+        //Debug.Log( _playheadTime );
         animators[ i ].PlayInFixedTime( info.clip.name, -1, _playheadTime );
 
         // Forward Frames
@@ -340,8 +349,9 @@ public class AnimationController : MonoBehaviour {
         {
             // Get the current animator clip data
             info = animators[ i ].GetCurrentAnimatorClipInfo( 0 )[ 0 ];
-
-            animators[ i ].PlayInFixedTime( info.clip.name, -1, _playheadTime + ( i * _secondsPerFrame ) * _exaggerateOnion );
+            tTime = _playheadTime + ( i * _secondsPerFrame );
+            //Debug.Log( tTime );
+            animators[ i ].PlayInFixedTime( info.clip.name, -1, tTime * _exaggerateOnion );
         }
     }
 
