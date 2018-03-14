@@ -68,7 +68,7 @@ public class AnimationController : MonoBehaviour {
 			// If the difference between the calculated vs. stored frame number
 			// is too great (> 0.25 second) to be reasonably shown on screen,
 			// just return the calculated frame number
-			if (Math.Abs(_currentFrame - calculatedFrame) > frameRate) {
+			if (Math.Abs(_currentFrame - calculatedFrame) > frameRate * 0.25) {
 				return calculatedFrame;
 			}
 
