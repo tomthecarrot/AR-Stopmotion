@@ -6,6 +6,8 @@ using System;
 
 public class UIController : MonoBehaviour {
 
+	public static UIController instance;
+
 	public Canvas mainMenu;
 
 	public GameObject activeSettingsPanel;
@@ -30,24 +32,24 @@ public class UIController : MonoBehaviour {
 	private int modelScale;
 
 	private enum menuState {
-   inactive,
-   activeSettings,
-   activeHelp,
-	 activeCredits
- }
+   		inactive,
+   		activeSettings,
+   		activeHelp,
+		activeCredits
+	}
 
- private menuState currMenuState;
+ 	private menuState currMenuState;
 
- // TEMPorary +_+_+_+_+_+_+_^+&_$%+*_%$^*+$%^*_+...
- private float dt = 0.0f;
- private bool t = true;
-/// deletetete^^^
+	 // TEMPorary +_+_+_+_+_+_+_^+&_$%+*_%$^*+$%^*_+...
+	private float dt = 0.0f;
+	private bool t = true;
+	/// deletetete^^^
 
- // public Action opacityChanged;
- // public Action framesForwardChanged;
- // public Action framesBackChanged;
- // public Action framesSkipChanged;
- // public Action modelScaleChanged;
+	public Action opacityChanged;
+	public Action framesForwardChanged;
+	public Action framesBackChanged;
+	public Action framesSkipChanged;
+ 	public Action modelScaleChanged;
 
 
 	void Start () {
@@ -66,18 +68,34 @@ public class UIController : MonoBehaviour {
 		activeSettingsPanel.SetActive(false);
 		activeHelpPanel.SetActive(false);
 		activeCreditsPanel.SetActive(false);
+
 	}
 
 
+//	public static UIController getInstance(){
+//
+//
+//	}
+
 	void Update(){
-		/*
+		
 		dt += Time.deltaTime;
 		if (dt > 4.0 && t){
 			t = false;
 			changeState(menuState.activeSettings);
 		}
-		*/
+	
 	}
+
+	void Awake() {
+		if (instance != null) {
+			Destroy (gameObject);
+		} else {
+			instance = this;
+			DontDestroyOnLoad (gameObject);
+		}
+	}
+		
 
 	private void changeState(menuState nextState){
 		Debug.Log("CHANGING STATE to... ");
@@ -165,31 +183,42 @@ public class UIController : MonoBehaviour {
 
 	private void updateOpacity(){
 		this.opacity = (float) opacitySlider.value;
-		//opacityChanged();
+		if (opacityChanged != null) {
+			opacityChanged ();
+		}
 		Debug.Log(this.opacity);
 	}
 
 	private void updateFramesBack(){
 		this.framesBack = (int) framesBackSlider.value;
-		//framesBackChanged();
+		if (framesBackChanged != null) {
+			framesBackChanged ();
+		}
 		Debug.Log(this.framesBack);
 	}
 
 	private void updateFramesForward(){
-		this.framesForward = (int) framesForwardSlider.value;
-		//framesForwardChanged();
+		this.framesForward = (int)framesForwardSlider.value;
+
+		if (framesForwardChanged != null){
+			framesForwardChanged();
+		}
 		Debug.Log(this.framesForward);
 	}
 
 	private void updateFramesSkip(){
 		this.framesSkip = (int) frameSkipSlider.value;
-		//framesSkipChanged();
+		if (framesSkipChanged != null) {
+			framesSkipChanged();
+		}
 		Debug.Log(this.framesSkip);
 	}
 
 	private void updateModelScale(){
 		this.modelScale = (int) modelScaleSlider.value;
-		//modelScaleChanged();
+		if (modelScaleChanged != null) {
+			modelScaleChanged ();
+		}
 		Debug.Log(this.modelScale);
 	}
 
