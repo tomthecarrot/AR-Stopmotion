@@ -98,6 +98,8 @@ public class AnimationController : MonoBehaviour {
 
 	}
 
+	///// EXPOSED FUNCTIONS /////
+
 	public void Forward() {
 		// Set speed to be positive
 		speed = Math.Abs(speed);
@@ -137,18 +139,15 @@ public class AnimationController : MonoBehaviour {
 	}
 
 	public void ForwardOneFrame() {
-		// Add one to current frame
+		// Add one to current frame, using setter method
+		// (see top of this class)
 		currentFrame += 1;
-
-		// Update
-		JumpToFrame(currentFrame);
 	}
 
 	public void BackOneFrame() {
-		// Subtract one from current frame
+		// Subtract one from current frame, using setter method
+		// (see top of this class)
 		currentFrame -= 1;
-
-		// Update
-		JumpToFrame(currentFrame);
 	}
+
 }
