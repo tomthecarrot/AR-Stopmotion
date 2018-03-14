@@ -468,7 +468,7 @@ public class AnimationController : MonoBehaviour {
     {
         Debug.Log( "HandleTriggerReleased" );
         character.SetActive( true );
-        
+
         StartPlayback();
         currentFrame = currentFrame;
     }
@@ -476,24 +476,34 @@ public class AnimationController : MonoBehaviour {
     private void HandleTouchpadPressed()
     {
         Debug.LogFormat( "HandleTouchpadPressed at: {0}, {1}", MiraController.TouchPos[ 0 ], MiraController.TouchPos[ 1 ] );
-        if ( MiraController.TouchPos[ 0 ] > 0.5f )
-        {
-            // frame forward
-            ForwardOneFrame();
+        if ( MiraController.TouchPos[ 1 ] <= -0.75f) {
+          // Toggle the menu UI
+          UIController.instance.toggleActive();
         }
-        else if ( MiraController.TouchPos[ 0 ] <= 0.5f )
-        {
-            // frame back
-            BackOneFrame();
+        else {
+          if ( MiraController.TouchPos[ 0 ] > 0f )
+          {
+              // frame forward
+              ForwardOneFrame();
+          }
+          else if ( MiraController.TouchPos[ 0 ] < 0f )
+          {
+              // frame back
+              BackOneFrame();
+          }
         }
-        else if ( MiraController.TouchPos[ 1 ] > 0.5f )
+
+        /* OLD
+        if ( MiraController.TouchPos[ 1 ] > 0.5f )
         {
             // ToggleOnionSkin();
         }
         else if ( MiraController.TouchPos[ 1 ] <= 0.5f )
         {
-            UIController.instance.toggleActive();
+          // Toggle the menu UI
+          UIController.instance.toggleActive();
         }
+        */
     }
 
     private void HandleBackPressed()
