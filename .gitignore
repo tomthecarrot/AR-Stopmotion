@@ -1,3 +1,7 @@
+# Custom for project
+Assets/Dance
+
+# Unity cache directories
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
