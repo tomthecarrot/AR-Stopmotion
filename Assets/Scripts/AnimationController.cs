@@ -125,7 +125,7 @@ public class AnimationController : MonoBehaviour {
 	}
 
 	// Whether the animation is still going
-	private bool _isAnimating = true;
+	private bool _isAnimating = false;
 
 	// Public getter/setter version of the above variable
 	public bool isAnimating {
@@ -192,6 +192,14 @@ public class AnimationController : MonoBehaviour {
 
 		// Handle new animator
 		if (!legacyMode) { HandleNewAnimator(); }
+	}
+
+	void OnEnable() {
+		// Start animation
+		animators[0].StartPlayback();
+
+		// TODO comment
+		currentFrame = currentFrame;
 	}
 
 	///// INTERNAL /////
@@ -307,21 +315,21 @@ public class AnimationController : MonoBehaviour {
     private void HandleTriggerReleased()
     {
         Debug.Log( "HandleTriggerReleased" );
-        gameObject.SetActive( true ); 
+        gameObject.SetActive( true );
     }
 
     private void HandleTouchpadPressed()
     {
         Debug.LogFormat( "HandleTouchpadPressed at: {0}, {1}", MiraController.TouchPos[ 0 ], MiraController.TouchPos[ 1 ] );
-        if( MiraController.TouchPos[ 1 ] > 0.5f )
+        if( MiraController.TouchPos[ 0 ] > 0.5f )
         {
             // frame forward
-            Forward();
+            ForwardOneFrame();
         }
-        else if ( MiraController.TouchPos[ 1 ] <= 0.5f )
+        else if ( MiraController.TouchPos[ 0 ] <= 0.5f )
         {
             // frame back
-            Reverse(); 
+            BackOneFrame();
         }
-    } 
+    }
 }
