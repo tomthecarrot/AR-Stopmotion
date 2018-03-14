@@ -11,6 +11,7 @@ using UnityEngine;
 public class AnimationController : MonoBehaviour {
 
 	// Object references
+	public static AnimationController instance;
 	private Animation animation;
 
 	// Editor-defined speed for each animation
@@ -63,6 +64,21 @@ public class AnimationController : MonoBehaviour {
 			// Return animation clip value
 			return animation[clipName].clip.frameRate;
 		}
+	}
+
+	public bool isAnimating {
+		get {
+			return speed != 0f
+						 && animation[clipName].speed != 0f
+						 && animation.enabled;
+		}
+	}
+
+	///// LIFECYCLE /////
+
+	void Awake() {
+		// Assign singleton reference to this component object
+		instance = this;
 	}
 
 	/// Initializer function
