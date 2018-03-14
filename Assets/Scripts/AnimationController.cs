@@ -106,11 +106,6 @@ public class AnimationController : MonoBehaviour {
 		animation.Play();
 	}
 
-	public void Pause() {
-		// Stop the animation
-		animation.Stop();
-	}
-
 	public void Reverse() {
 		// Set speed to be negative
 		speed = -Math.Abs(speed);
@@ -119,10 +114,26 @@ public class AnimationController : MonoBehaviour {
 		animation.Play();
 	}
 
+	public void Pause() {
+		// Stop the animation
+		animation[clipName].speed = 0f;
+	}
+
+	public void Resume() {
+		// Set speed to be positive
+		speed = Math.Abs(speed);
+	}
+
 	public void JumpToFrame(int frameNumber) {
 		// Set new frame number, using setter method
 		// (see top of this class)
 		currentFrame = frameNumber;
+	}
+
+	public void SetNewSpeed(float newSpeed) {
+		// Set new speed, using setter method
+		// (see top of this class)
+		speed = newSpeed;
 	}
 
 	public void ForwardOneFrame() {
