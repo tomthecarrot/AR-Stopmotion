@@ -107,7 +107,47 @@ public class AnimationController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		// Use keyboard to test, out of headset
+		KeyboardTest();
+	}
 
+	void KeyboardTest() {
+		if (Input.GetKeyDown(KeyCode.E)) {
+			// If already animating, pause
+			if (isAnimating) {
+				Pause();
+			}
+			// Otherwise, start animating forward
+			else {
+				Forward();
+			}
+		}
+		else if (Input.GetKeyDown(KeyCode.R)) {
+			// If already animating, pause
+			if (isAnimating) {
+				Pause();
+			}
+			// Otherwise, start animating in reverse
+			else {
+				Reverse();
+			}
+		}
+		else if (Input.GetKeyDown(KeyCode.UpArrow)) {
+			// Increase speed by 100% (2x)
+			SetNewSpeed(speed * 2f);
+		}
+		else if (Input.GetKeyDown(KeyCode.DownArrow)) {
+			// Decrease speed by 100% (0.5x)
+			SetNewSpeed(speed / 2f);
+		}
+		else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+			// Move back by one frame
+			BackOneFrame();
+		}
+		else if (Input.GetKeyDown(KeyCode.RightArrow)) {
+			// Move forward by one frame
+			ForwardOneFrame();
+		}
 	}
 
 	///// EXPOSED FUNCTIONS /////
