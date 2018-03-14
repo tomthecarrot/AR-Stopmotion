@@ -15,9 +15,16 @@ public class AnimationController : MonoBehaviour {
 	// Object references
 	public static AnimationController instance;
 	private Animation animation;
+	private List<Animator> animators;
+
+	// Editor-defined flag for legacy/humanoid modes
+	public bool legacyMode = false;
 
 	// Editor-defined speed for each animation
 	public float _speed = 1.0f;
+
+	// Editor-defined target frame rate (non-legacy only)
+	public int targetFrameRate = 30;
 
 	// Getter/setter version of the above variable
 	public float speed {
@@ -29,7 +36,8 @@ public class AnimationController : MonoBehaviour {
 			_speed = value;
 
 			// Set new value to the animation state
-			animation[clipName].speed = value;
+			if (legacyMode) { animation[clipName].speed = value; }
+			else { }
 		}
 	}
 
@@ -67,22 +75,34 @@ public class AnimationController : MonoBehaviour {
 			float newTime = (float) this._currentFrame / frameRate;
 
 			// Seek to that frame in the animation
-			animation[clipName].time = newTime;
+			if (legacyMode) { animation[clipName].time = newTime; }
+			else { }
 		}
 	}
 
+	// Public getter version of the above variable
 	public float frameRate {
 		get {
 			// Return animation clip value
-			return animation[clipName].clip.frameRate;
+			if (legacyMode) { return animation[clipName].clip.frameRate; }
+			else { return targetFrameRate; }
 		}
 	}
 
+	// Current playhead time, in seconds (non-legacy only)
+	private float playheadTime = 0;
+	
+	// Whether the animation is still going
 	public bool isAnimating {
 		get {
-			return speed != 0f
-						 && animation[clipName].speed != 0f
-						 && animation.enabled;
+			if (legacyMode) {
+				return speed != 0f
+							 && animation[clipName].speed != 0f
+						 	 && animation.enabled;
+			}
+			else {
+				return true; // TODO
+			}
 		}
 	}
 
@@ -91,25 +111,42 @@ public class AnimationController : MonoBehaviour {
 	void Awake() {
 		// Assign singleton reference to this component object
 		instance = this;
+
+		// Initialize list of animators
+		if (!legacyMode) { animators = new List<Animator>(); }
 	}
 
 	/// Initializer function
 	void Start () {
-		// Initialize animation object
-		animation = gameObject.GetComponent<Animation>();
+		if (legacyMode) {
+			// Get animation component
+			animation = gameObject.GetComponent<Animation>();
 
-		// Set animation to move along keyframes forward, then in reverse
-		animation.wrapMode = WrapMode.PingPong;
+			// Set animation to move along keyframes forward, then in reverse
+			animation.wrapMode = WrapMode.PingPong;
 
-		// Start animation
-		animation.Play();
+			// Start animation
+			animation.Play();
+		}
+		else {
+			// Get animator component
+			animators.Add(gameObject.GetComponent<Animator>());
+			
+			// Start animation
+			Forward();
+		}
 	}
 
 	// Update is called once per frame
 	void Update () {
 		// Use keyboard to test, out of headset
 		KeyboardTest();
+
+		// TODO add comment
+		HandleNonLegacy();
 	}
+
+	///// INTERNAL /////
 
 	void KeyboardTest() {
 		if (Input.GetKeyDown(KeyCode.E)) {
@@ -150,14 +187,21 @@ public class AnimationController : MonoBehaviour {
 		}
 	}
 
-	///// EXPOSED FUNCTIONS /////
+	void HandleNonLegacy() {
+		playheadTime += 1 / frameRate;// / Application.targetFrameRate;
+		AnimatorClipInfo info = animators[0].GetCurrentAnimatorClipInfo(0)[0];
+		animators[0].PlayInFixedTime(info.clip.name, -1, playheadTime);
+	}
+
+	///// EXPOSED /////
 
 	public void Forward() {
 		// Set speed to be positive
 		speed = Math.Abs(speed);
 
 		// Play the animation
-		animation.Play();
+		if (legacyMode) { animation.Play(); }
+		else { animators[0].StartPlayback(); }
 	}
 
 	public void Reverse() {
@@ -165,12 +209,14 @@ public class AnimationController : MonoBehaviour {
 		speed = -Math.Abs(speed);
 
 		// Play the animation
-		animation.Play();
+		if (legacyMode) { animation.Play(); }
+		else { }
 	}
 
 	public void Pause() {
 		// Stop the animation
-		animation[clipName].speed = 0f;
+		if (legacyMode) { animation[clipName].speed = 0f; }
+		else { }
 	}
 
 	public void Resume() {

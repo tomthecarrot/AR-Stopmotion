@@ -160,6 +160,75 @@ Transform:
   m_PrefabParentObject: {fileID: 4701798572140412, guid: 38c29d463a63e46ec94466fa67ebbbdd,
     type: 2}
   m_PrefabInternal: {fileID: 526016246}
+--- !u!1001 &922848513
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 645497795}
+    m_Modifications:
+    - target: {fileID: 400102, guid: 9997531835b451e408002cfd471fecba, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400102, guid: 9997531835b451e408002cfd471fecba, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400102, guid: 9997531835b451e408002cfd471fecba, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400102, guid: 9997531835b451e408002cfd471fecba, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400102, guid: 9997531835b451e408002cfd471fecba, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400102, guid: 9997531835b451e408002cfd471fecba, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400102, guid: 9997531835b451e408002cfd471fecba, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400102, guid: 9997531835b451e408002cfd471fecba, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: 9997531835b451e408002cfd471fecba, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 27d34ec12e048014faa0d49da4c283b1, type: 2}
+    - target: {fileID: 9500000, guid: 9997531835b451e408002cfd471fecba, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 9997531835b451e408002cfd471fecba, type: 3}
+  m_IsPrefabParent: 0
+--- !u!1 &922848514 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 100102, guid: 9997531835b451e408002cfd471fecba, type: 3}
+  m_PrefabInternal: {fileID: 922848513}
+--- !u!114 &922848515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 922848514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 189f31ca2ed404b709df448abdda10c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  legacyMode: 0
+  _speed: 1
+  targetFrameRate: 60
+  clipName: Clip
 --- !u!1001 &990250093
 Prefab:
   m_ObjectHideFlags: 0
@@ -197,7 +266,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400144, guid: 7a413757db9bc4e629bdd822b9570aff, type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400144, guid: 7a413757db9bc4e629bdd822b9570aff, type: 3}
       propertyPath: m_LocalScale.x
@@ -217,7 +286,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100144, guid: 7a413757db9bc4e629bdd822b9570aff, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7a413757db9bc4e629bdd822b9570aff, type: 3}
@@ -237,5 +306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 189f31ca2ed404b709df448abdda10c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
+  legacyMode: 1
+  _speed: 1
+  targetFrameRate: 30
   clipName: Stand Up
