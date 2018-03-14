@@ -37,7 +37,6 @@ public class AnimationController : MonoBehaviour {
 
 			// Set new value to the animation state
 			if (legacyMode) { animation[clipName].speed = value; }
-			else { }
 		}
 	}
 
@@ -50,15 +49,24 @@ public class AnimationController : MonoBehaviour {
 	// Public getter/setter version of the above variable
 	public int currentFrame {
 		get {
-			// Get animation state values
-			AnimationState state = animation[clipName];
-			float currentTime = state.time;
+
+			float currentTime;
+
+			if (legacyMode) {
+				// Get animation state values
+				AnimationState state = animation[clipName];
+				currentTime = state.time;
+			}
+			else {
+				// Get current playhead (non-legacy only)
+				currentTime = playheadTime;
+			}
 
 			// Calculate and return
 			int calculatedFrame = (int) (currentTime * frameRate);
 
 			// If the difference between the calculated vs. stored frame number
-			// is too great (> 1 second) to be reasonably shown on screen,
+			// is too great (> 0.25 second) to be reasonably shown on screen,
 			// just return the calculated frame number
 			if (Math.Abs(_currentFrame - calculatedFrame) > frameRate) {
 				return calculatedFrame;
@@ -76,7 +84,7 @@ public class AnimationController : MonoBehaviour {
 
 			// Seek to that frame in the animation
 			if (legacyMode) { animation[clipName].time = newTime; }
-			else { }
+			else { playheadTime = newTime; }
 		}
 	}
 
@@ -90,9 +98,33 @@ public class AnimationController : MonoBehaviour {
 	}
 
 	// Current playhead time, in seconds (non-legacy only)
-	private float playheadTime = 0;
-	
+	private float _playheadTime = 0;
+
+	// Public getter/setter version of the above variable
+	public float playheadTime {
+		get {
+			return _playheadTime;
+		}
+		set {
+			// This setter is for non-legacy mode only,
+			// so skip this setter if the app is in legacy mode
+			if (legacyMode) { return; }
+
+			// Set value
+			_playheadTime = value;
+
+			// Get the current animator clip data
+			AnimatorClipInfo info = animators[0].GetCurrentAnimatorClipInfo(0)[0];
+
+			// Seek to animation frame at the new playhead time
+			animators[0].PlayInFixedTime(info.clip.name, -1, _playheadTime);
+		}
+	}
+
 	// Whether the animation is still going
+	private bool _isAnimating = true;
+
+	// Public getter/setter version of the above variable
 	public bool isAnimating {
 		get {
 			if (legacyMode) {
@@ -101,7 +133,15 @@ public class AnimationController : MonoBehaviour {
 						 	 && animation.enabled;
 			}
 			else {
-				return true; // TODO
+				return _isAnimating;
+			}
+		}
+		set {
+			// Only settable if running in non-legacy mode
+			// (see the above getter to understand why)
+			if (!legacyMode) {
+				// Set new value
+				_isAnimating = value;
 			}
 		}
 	}
@@ -131,9 +171,9 @@ public class AnimationController : MonoBehaviour {
 		else {
 			// Get animator component
 			animators.Add(gameObject.GetComponent<Animator>());
-			
+
 			// Start animation
-			Forward();
+			animators[0].StartPlayback();
 		}
 	}
 
@@ -142,8 +182,8 @@ public class AnimationController : MonoBehaviour {
 		// Use keyboard to test, out of headset
 		KeyboardTest();
 
-		// TODO add comment
-		HandleNonLegacy();
+		// Handle new animator
+		if (!legacyMode) { HandleNewAnimator(); }
 	}
 
 	///// INTERNAL /////
@@ -170,12 +210,12 @@ public class AnimationController : MonoBehaviour {
 			}
 		}
 		else if (Input.GetKeyDown(KeyCode.UpArrow)) {
-			// Increase speed by 100% (2x)
-			SetNewSpeed(speed * 2f);
+			// Increase speed by 10%
+			SetNewSpeed(speed * 1.1f);
 		}
 		else if (Input.GetKeyDown(KeyCode.DownArrow)) {
-			// Decrease speed by 100% (0.5x)
-			SetNewSpeed(speed / 2f);
+			// Decrease speed by 10%
+			SetNewSpeed(speed / 1.1f);
 		}
 		else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
 			// Move back by one frame
@@ -187,10 +227,12 @@ public class AnimationController : MonoBehaviour {
 		}
 	}
 
-	void HandleNonLegacy() {
-		playheadTime += 1 / frameRate;// / Application.targetFrameRate;
-		AnimatorClipInfo info = animators[0].GetCurrentAnimatorClipInfo(0)[0];
-		animators[0].PlayInFixedTime(info.clip.name, -1, playheadTime);
+	void HandleNewAnimator() {
+		// Skip if shouldn't be animating
+		if (!isAnimating) { return; }
+
+		// Add to playhead time
+		playheadTime += (1 / frameRate) * speed; // (Application.targetFrameRate)
 	}
 
 	///// EXPOSED /////
@@ -201,7 +243,7 @@ public class AnimationController : MonoBehaviour {
 
 		// Play the animation
 		if (legacyMode) { animation.Play(); }
-		else { animators[0].StartPlayback(); }
+		else { isAnimating = true; }
 	}
 
 	public void Reverse() {
@@ -210,13 +252,13 @@ public class AnimationController : MonoBehaviour {
 
 		// Play the animation
 		if (legacyMode) { animation.Play(); }
-		else { }
+		else { isAnimating = true; }
 	}
 
 	public void Pause() {
 		// Stop the animation
 		if (legacyMode) { animation[clipName].speed = 0f; }
-		else { }
+		else { isAnimating = false; }
 	}
 
 	public void Resume() {
